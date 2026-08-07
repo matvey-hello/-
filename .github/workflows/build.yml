@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      ANDROID_HOME: /home/runner/.buildozer/android/platform/android-sdk
     steps:
       - uses: actions/checkout@v4
       
@@ -25,16 +27,11 @@ jobs:
         run: |
           pip install buildozer cython
       
-      - name: Accept Android licenses
-        run: |
-          yes | sdkmanager --licenses
-      
-      - name: Install Android SDK components
-        run: |
-          sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.0"
-      
       - name: Build APK
         run: |
+          mkdir -p $ANDROID_HOME/licenses
+          echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > $ANDROID_HOME/licenses/android-sdk-license
+          echo "84831b9409646a918e30573bab4c9c91346d8abd" > $ANDROID_HOME/licenses/android-sdk-preview-license
           buildozer android debug
       
       - name: Upload APK
